@@ -1,5 +1,3 @@
-#pragma once
-
 #include <cstddef>
 #include <string>
 #include <utility>
@@ -100,13 +98,27 @@ public:
     [[nodiscard]] ConstIterator cbefore_begin() const noexcept { return ConstIterator{const_cast<Node *>(&head_)}; }
 
     SingleLinkedList() = default;
-    SingleLinkedList(std::initializer_list<Type> values) { CopyInThis(values); }
+    SingleLinkedList(std::initializer_list<Type> values) {
+        SingleLinkedList temp; 
+        for (auto val = values.end() - 1; val != values.begin(); --val) 
+        { 
+            temp.PushFront(*val); 
+        } 
+        temp.PushFront(*values.begin()); 
+        swap(temp); 
+         }
 
     SingleLinkedList(const SingleLinkedList &other)
     {
-        if (other.GetSize() != 0)
-        {
-            CopyInThis(other);
+         std::vector<Type> for_reverse;
+        for (auto value : other) {
+            for_reverse.push_back(value);
+        }
+
+        if (for_reverse.size() != 0) {
+            for (auto it = for_reverse.rbegin(); it != for_reverse.rend(); ++it) {
+                PushFront(*it);
+            }
         }
     }
 
@@ -189,18 +201,6 @@ public:
 private:
     size_t size_ = 0;
     Node head_;
-
-    template <typename Container>
-    void CopyInThis(Container other)
-    {
-        SingleLinkedList temp;
-        for (auto val = other.end() - 1; val != other.begin(); --val)
-        {
-            temp.PushFront(*val);
-        }
-        temp.PushFront(*other.begin());
-        swap(temp);
-    }
 };
 
 template <typename Type>
@@ -245,5 +245,3 @@ bool operator>=(const SingleLinkedList<Type> &lhs, const SingleLinkedList<Type> 
 {
     return !(lhs < rhs);
 }
-
-// внешние функции разместите здесь
